@@ -14,6 +14,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   })
   if (!email) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
+  // Verify the email is from the NPS domain that the user has access to
+  if (!email.fromAddress.toLowerCase().endsWith('@npsis.edu.sg')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   await prisma.email.update({ where: { id: params.id }, data: { isRead: true } })
 
   return NextResponse.json(email)

@@ -86,7 +86,12 @@ function parseRelativeDate(text: string, baseDate: Date): Date | null {
     }
   }
   
-  if (/\bend of (this )?week\b/.test(lower)) return addDays(baseDate, 5 - baseDate.getDay())
+  if (/\bend of (this )?week\b/.test(lower)) {
+    const currentDay = baseDate.getDay()
+    // If it's Saturday (6) or Sunday (0), find the next Friday
+    const daysUntilFriday = currentDay <= 5 ? 5 - currentDay : 5 + (7 - currentDay)
+    return addDays(baseDate, daysUntilFriday)
+  }
   
   return null
 }
